@@ -16,9 +16,11 @@ import { createFile, installDependencies } from "../lib/utils.js";
 let framework_choice = "React";
 let ts_choice = true;
 let eslint_choice = true;
+let package_manager = "npm";
 
 async function init() {
   const actions = [
+    askForPackageManager,
     askTypescriptUsage,
     askFramework,
     askEslintUsage,
@@ -29,6 +31,16 @@ async function init() {
   for (const action of actions) {
     await action();
   }
+}
+
+async function askForPackageManager() {
+  const answers = await inquirer.prompt({
+    name: "package_manager",
+    type: "list",
+    message: "Which Node package manager do you use?",
+    choices: ["npm", "pnpm", "yarn"],
+  });
+  package_manager = answers.package_manager;
 }
 
 async function askFramework() {
@@ -113,7 +125,7 @@ async function installReqDependencies() {
       "eslint-plugin-testing-library",
     ];
   }
-  installDependencies(deps);
+  installDependencies(package_manager, deps);
 }
 
 await init();
